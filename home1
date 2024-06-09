@@ -1,1 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube MP3コンバータ</title>
+</head>
+<body>
+    <h1>YouTube MP3コンバータ</h1>
+    <form id="convert-form">
+        <label for="video-url">動画のURLを入力してください:</label>
+        <input type="text" id="video-url" name="video-url" required>
+        <button type="submit">変換する</button>
+    </form>
+    <div id="result">
+        <h2>変換結果:</h2>
+        <a id="download-link" href="#" target="_blank">ダウンロードリンク</a>
+    </div>
 
+    <script>
+        // JavaScriptコードはここに入ります
+    </script>
+</body>
+</html>
