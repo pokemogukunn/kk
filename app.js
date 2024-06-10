@@ -15,7 +15,9 @@ app.get("/api/convert", async (req, res) => {
         const format = ytdl.chooseFormat(info.formats, { quality: "18" }); // itag 18 is for MP4
 
         if (format && format.url) {
-            return res.json({ success: true, downloadUrl: format.url });
+            // ダウンロードリンクを修正
+            const downloadUrl = format.url.replace("https://www.googleapis.com/", "https://rr4---sn-npoe7ndl.googlevideo.com/");
+            return res.json({ success: true, downloadUrl });
         } else {
             return res.status(500).json({ success: false, message: "適切なフォーマットが見つかりませんでした。" });
         }
