@@ -3,10 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube MP3コンバータ</title>
+    <title>YouTube MP4ダウンローダー</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        #result {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>YouTube MP3コンバータ</h1>
+    <h1>YouTube MP4ダウンローダー</h1>
     <form id="convert-form">
         <label for="video-url">動画のURLを入力してください:</label>
         <input type="text" id="video-url" name="video-url" required>
@@ -19,46 +34,43 @@
 
     <script>
         document.getElementById('convert-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    var videoUrl = document.getElementById('video-url').value;
-    var videoId = getVideoId(videoUrl);
-    if (videoId) {
-        var apiUrl = '/api/convert?videoId=' + videoId;
+            event.preventDefault();
+            var videoUrl = document.getElementById('video-url').value;
+            var videoId = getVideoId(videoUrl);
+            if (videoId) {
+                var apiUrl = '/api/convert?videoId=' + videoId;
 
-        fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('ネットワークの応答が正しくありません');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    // ダウンロードリンクの設定
-                    var downloadLink = document.getElementById('download-link');
-                    downloadLink.href = data.downloadUrl;
-                    downloadLink.textContent = "ダウンロードリンク"; // テキストを適切に設定する
-                    // 変換結果を表示
-                    document.getElementById('result').style.display = 'block';
-                } else {
-                    alert('変換に失敗しました。再試行してください。');
-                }
-            })
-            .catch(error => {
-                console.error('エラーが発生しました:', error);
-                alert('エラーが発生しました。再試行してください。');
-            });
-    } else {
-        alert('有効なYouTube URLを入力してください。');
-    }
-});
+                fetch(apiUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('ネットワークの応答が正しくありません');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            var downloadLink = document.getElementById('download-link');
+                            downloadLink.href = data.downloadUrl;
+                            downloadLink.textContent = data.downloadUrl;
+                            document.getElementById('result').style.display = 'block';
+                        } else {
+                            alert('変換に失敗しました。再試行してください。');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('エラーが発生しました:', error);
+                        alert('エラーが発生しました。再試行してください。');
+                    });
+            } else {
+                alert('有効なYouTube URLを入力してください。');
+            }
+        });
 
-function getVideoId(url) {
-    var regex = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-    var match = url.match(regex);
-    return match ? match[1] : null;
-}
-
+        function getVideoId(url) {
+            var regex = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+            var match = url.match(regex);
+            return match ? match[1] : null;
+        }
     </script>
 </body>
 </html>
