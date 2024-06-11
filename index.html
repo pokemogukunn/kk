@@ -22,6 +22,10 @@
             width: 100%;
             max-width: 600px;
         }
+        .error-message {
+            color: red;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -40,6 +44,7 @@
             <p id="videoDescription"></p>
             <a id="downloadLink" href="#" class="pure-button pure-button-primary" download>ダウンロード</a>
         </div>
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
     </div>
 
     <script>
@@ -58,8 +63,12 @@
                 document.getElementById('downloadLink').href = data.downloadUrl;
 
                 document.getElementById('videoDetails').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
             } else {
-                alert('動画情報の取得に失敗しました。');
+                const errorData = await response.json();
+                document.getElementById('errorMessage').textContent = `エラー: ${errorData.error}`;
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('videoDetails').style.display = 'none';
             }
         });
     </script>
