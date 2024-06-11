@@ -100,7 +100,7 @@
             } else {
                 const errorData = await response.json();
                 document.getElementById('errorMessage').textContent = `エラー: ${errorData.error}`;
-                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'block'; // エラーメッセージを表示
                 document.getElementById('videoDetails').style.display = 'none';
                 document.getElementById('downloadLink').style.display = 'none';
             }
