@@ -6,83 +6,45 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/2.0.6/pure-min.css">
     <style>
         body {
-            background-color: #fff;
             color: #333;
             font-family: Arial, sans-serif;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: background-image 1s ease-in-out;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background-color: rgba(255, 255, 255, 0.7); /* 背景が透過している場合に追加 */
         }
-        .video-details {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .video-info {
-            flex-grow: 1;
-        }
-        .thumbnail {
-            width: 100%;
-            max-width: 600px;
-        }
-        .error-message {
-            color: red;
-            margin-top: 20px;
-        }
-        .download-link {
-            flex-shrink: 0;
-            margin-left: 20px;
-        }
+        /* その他のスタイルは省略 */
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>動画ダウンロード</h1>
-        <form class="pure-form" id="videoForm">
-            <fieldset>
-                <input type="text" id="videoId" placeholder="YouTube動画ID" required>
-                <button type="submit" class="pure-button pure-button-primary">ダウンロードリンク取得</button>
-            </fieldset>
-        </form>
-        <div id="videoDetails" class="video-details" style="display: none;">
-            <div class="video-info">
-                <h2 id="videoTitle"></h2>
-                <p id="videoAuthor"></p>
-                <img id="videoThumbnail" class="thumbnail" alt="サムネイル">
-                <p id="videoDescription"></p>
-            </div>
-            <a id="downloadLink" href="#" class="pure-button pure-button-primary download-link" download>ダウンロード</a>
-        </div>
-        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        <!-- コンテンツはここに配置 -->
     </div>
 
     <script>
-        document.getElementById('videoForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
+        // 背景画像のリスト
+        const backgrounds = [
+            'background1.jpg',
+            'background2.jpg',
+            'background3.jpg',
+            // 他の画像も追加
+        ];
 
-            const videoId = document.getElementById('videoId').value;
-            const response = await fetch(`/api/video?videoId=${videoId}`);
+        // 背景をランダムに選択して適用する関数
+        function setRandomBackground() {
+            const randomIndex = Math.floor(Math.random() * backgrounds.length);
+            const randomBackground = backgrounds[randomIndex];
+            document.body.style.backgroundImage = `url(${randomBackground})`;
+        }
 
-            if (response.ok) {
-                const data = await response.json();
-                document.getElementById('videoTitle').textContent = data.title;
-                document.getElementById('videoAuthor').textContent = `作者: ${data.author}`;
-                document.getElementById('videoThumbnail').src = data.thumbnail;
-                document.getElementById('videoDescription').textContent = data.description;
-                document.getElementById('downloadLink').href = data.downloadUrl;
-
-                document.getElementById('videoDetails').style.display = 'flex';
-                document.getElementById('errorMessage').style.display = 'none';
-            } else {
-                const errorData = await response.json();
-                document.getElementById('errorMessage').textContent = `エラー: ${errorData.error}`;
-                document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('videoDetails').style.display = 'none';
-            }
-        });
+        // ページ読み込み時に背景をランダムに設定する
+        window.addEventListener('load', setRandomBackground);
     </script>
 </body>
 </html>
