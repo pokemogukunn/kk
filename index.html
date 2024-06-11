@@ -6,45 +6,105 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/2.0.6/pure-min.css">
     <style>
         body {
-            color: #333;
+            background-color: #fff;
+            color: #000;
             font-family: Arial, sans-serif;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            transition: background-image 1s ease-in-out;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.7); /* 背景が透過している場合に追加 */
         }
-        /* その他のスタイルは省略 */
+        .form-container {
+            display: flex;
+            align-items: center;
+        }
+        .form-container input[type="text"],
+        .form-container button {
+            margin-right: 10px;
+        }
+        .form-container button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 8px 16px;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+        .video-details {
+            margin-top: 20px;
+        }
+        .thumbnail {
+            width: 100%;
+            max-width: 600px;
+        }
+        .error-message {
+            color: red;
+            margin-top: 20px;
+        }
+        .download-link {
+            float: right;
+            margin-top: 10px;
+        }
+        .download-link a {
+            background-color: #a3cef1;
+            color: #007bff;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .download-link a:hover {
+            background-color: #6eb5e5;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- コンテンツはここに配置 -->
+        <h1>動画ダウンロード</h1>
+        <div class="form-container">
+            <input type="text" id="videoId" placeholder="YouTube動画ID" required>
+            <button type="submit" id="submitBtn">ダウンロードリンク取得</button>
+        </div>
+        <div id="videoDetails" class="video-details" style="display: none;">
+            <h2 id="videoTitle"></h2>
+            <p id="videoAuthor"></p>
+            <img id="videoThumbnail" class="thumbnail" alt="サムネイル">
+            <p id="videoDescription"></p>
+            <div class="download-link" id="downloadLink" style="display: none;">
+                <a href="#" id="downloadAnchor" download>ダウンロード</a>
+            </div>
+        </div>
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
     </div>
 
     <script>
-        // 背景画像のリスト
-        const backgrounds = [
-            'background1.jpg',
-            'background2.jpg',
-            'background3.jpg',
-            // 他の画像も追加
-        ];
+        document.getElementById('submitBtn').addEventListener('click', async function (e) {
+            e.preventDefault();
 
-        // 背景をランダムに選択して適用する関数
-        function setRandomBackground() {
-            const randomIndex = Math.floor(Math.random() * backgrounds.length);
-            const randomBackground = backgrounds[randomIndex];
-            document.body.style.backgroundImage = `url(${randomBackground})`;
-        }
+            const videoId = document.getElementById('videoId').value;
+            const response = await fetch(`/api/video?videoId=${videoId}`);
 
-        // ページ読み込み時に背景をランダムに設定する
-        window.addEventListener('load', setRandomBackground);
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('videoTitle').textContent = data.title;
+                document.getElementById('videoAuthor').textContent = `作者: ${data.author}`;
+                document.getElementById('videoThumbnail').src = data.thumbnail;
+                document.getElementById('videoDescription').textContent = data.description;
+                document.getElementById('downloadAnchor').href = data.downloadUrl;
+
+                document.getElementById('videoDetails').style.display = 'block';
+                document.getElementById('downloadLink').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+            } else {
+                const errorData = await response.json();
+                document.getElementById('errorMessage').textContent = `エラー: ${errorData.error}`;
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('videoDetails').style.display = 'none';
+                document.getElementById('downloadLink').style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
