@@ -2,75 +2,66 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube MP4ダウンローダー</title>
+    <title>動画ダウンロード</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/2.0.6/pure-min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
+            background-color: #fff;
             color: #333;
+            font-family: Arial, sans-serif;
         }
-        form {
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .video-details {
             margin-bottom: 20px;
         }
-        #result {
-            display: none;
+        .thumbnail {
+            width: 100%;
+            max-width: 600px;
         }
     </style>
 </head>
 <body>
-    <h1>YouTube MP4ダウンローダー</h1>
-    <form id="convert-form">
-        <label for="video-url">動画のURLを入力してください:</label>
-        <input type="text" id="video-url" name="video-url" required>
-        <button type="submit">変換する</button>
-    </form>
-    <div id="result">
-        <h2>変換結果:</h2>
-        <a id="download-link" href="#" target="_blank">ダウンロードリンク</a>
+    <div class="container">
+        <h1>動画ダウンロード</h1>
+        <form class="pure-form" id="videoForm">
+            <fieldset>
+                <input type="text" id="videoId" placeholder="YouTube動画ID" required>
+                <button type="submit" class="pure-button pure-button-primary">ダウンロードリンク取得</button>
+            </fieldset>
+        </form>
+        <div id="videoDetails" class="video-details" style="display: none;">
+            <h2 id="videoTitle"></h2>
+            <p id="videoAuthor"></p>
+            <img id="videoThumbnail" class="thumbnail" alt="サムネイル">
+            <p id="videoDescription"></p>
+            <a id="downloadLink" href="#" class="pure-button pure-button-primary" download>ダウンロード</a>
+        </div>
     </div>
 
     <script>
-        document.getElementById('convert-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            var videoUrl = document.getElementById('video-url').value;
-            var videoId = getVideoId(videoUrl);
-            if (videoId) {
-                var apiUrl = '/api/convert?videoId=' + videoId;
+        document.getElementById('videoForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-                fetch(apiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('ネットワークの応答が正しくありません');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            var downloadLink = document.getElementById('download-link');
-                            downloadLink.href = data.downloadUrl;
-                            downloadLink.textContent = data.downloadUrl;
-                            document.getElementById('result').style.display = 'block';
-                        } else {
-                            alert('変換に失敗しました。再試行してください。');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('エラーが発生しました:', error);
-                        alert('エラーが発生しました。再試行してください。');
-                    });
+            const videoId = document.getElementById('videoId').value;
+            const response = await fetch(`/api/video?videoId=${videoId}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('videoTitle').textContent = data.title;
+                document.getElementById('videoAuthor').textContent = `作者: ${data.author}`;
+                document.getElementById('videoThumbnail').src = data.thumbnail;
+                document.getElementById('videoDescription').textContent = data.description;
+                document.getElementById('downloadLink').href = data.downloadUrl;
+
+                document.getElementById('videoDetails').style.display = 'block';
             } else {
-                alert('有効なYouTube URLを入力してください。');
+                alert('動画情報の取得に失敗しました。');
             }
         });
-
-        function getVideoId(url) {
-            var regex = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-            var match = url.match(regex);
-            return match ? match[1] : null;
-        }
     </script>
 </body>
 </html>
