@@ -17,6 +17,12 @@
         }
         .video-details {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .video-info {
+            flex-grow: 1;
         }
         .thumbnail {
             width: 100%;
@@ -25,6 +31,10 @@
         .error-message {
             color: red;
             margin-top: 20px;
+        }
+        .download-link {
+            flex-shrink: 0;
+            margin-left: 20px;
         }
     </style>
 </head>
@@ -38,11 +48,13 @@
             </fieldset>
         </form>
         <div id="videoDetails" class="video-details" style="display: none;">
-            <h2 id="videoTitle"></h2>
-            <p id="videoAuthor"></p>
-            <img id="videoThumbnail" class="thumbnail" alt="サムネイル">
-            <p id="videoDescription"></p>
-            <a id="downloadLink" href="#" class="pure-button pure-button-primary" download>ダウンロード</a>
+            <div class="video-info">
+                <h2 id="videoTitle"></h2>
+                <p id="videoAuthor"></p>
+                <img id="videoThumbnail" class="thumbnail" alt="サムネイル">
+                <p id="videoDescription"></p>
+            </div>
+            <a id="downloadLink" href="#" class="pure-button pure-button-primary download-link" download>ダウンロード</a>
         </div>
         <div id="errorMessage" class="error-message" style="display: none;"></div>
     </div>
@@ -62,7 +74,7 @@
                 document.getElementById('videoDescription').textContent = data.description;
                 document.getElementById('downloadLink').href = data.downloadUrl;
 
-                document.getElementById('videoDetails').style.display = 'block';
+                document.getElementById('videoDetails').style.display = 'flex';
                 document.getElementById('errorMessage').style.display = 'none';
             } else {
                 const errorData = await response.json();
