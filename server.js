@@ -11,6 +11,7 @@ app.get('/api/video', async (req, res) => {
     const videoId = req.query.videoId;
 
     if (!ytdl.validateID(videoId)) {
+        console.log('Invalid video ID:', videoId);
         return res.status(400).json({ error: 'Invalid video ID' });
     }
 
@@ -26,7 +27,8 @@ app.get('/api/video', async (req, res) => {
             downloadUrl: format.url
         });
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch video info' });
+        console.error('Failed to fetch video info:', error);
+        res.status(500).json({ error: error.message });
     }
 });
 
