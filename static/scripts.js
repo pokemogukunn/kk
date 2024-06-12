@@ -1,26 +1,64 @@
-document.getElementById('search-button').addEventListener('click', function() {
-    var query = document.getElementById('search-input').value;
-    fetch('/search?q=' + query)
-        .then(response => response.json())
-        .then(data => {
-            var results = document.getElementById('results');
-            results.innerHTML = '';
-            if (data.items) {
-                data.items.forEach(item => {
-                    var video = document.createElement('div');
-                    video.innerHTML = `
-                        <h3>${item.snippet.title}</h3>
-                        <a href="https://www.youtube.com/watch?v=${item.id.videoId}" target="_blank">
-                            <img src="${item.snippet.thumbnails.default.url}" alt="${item.snippet.title}">
-                        </a>
-                    `;
-                    results.appendChild(video);
-                });
-            } else {
-                results.innerHTML = '<p class="error">検索に失敗しました</p>';
-            }
-        })
-        .catch(error => {
-            document.getElementById('results').innerHTML = '<p class="error">検索に失敗しました</p>';
+// scripts.js
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('search-form');
+    const searchBox = document.getElementById('search-box');
+    const searchResults = document.getElementById('search-results');
+    const errorMessage = document.getElementById('error-message');
+    const videoPlayerContainer = document.getElementById('player-container');
+
+    searchForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        searchYouTube(searchBox.value);
+    });
+
+    function searchYouTube(query) {
+        fetch(`/api/search?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                displayResults(data.items);
+            })
+            .catch(error => {
+                displayError('検索に失敗しました');
+            });
+    }
+
+    function displayResults(items) {
+        searchResults.innerHTML = '';
+        items.forEach(item => {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'search-result';
+            resultDiv.innerHTML = `
+                <p>${item.snippet.title}</p>
+                <a href="#" class="play-video" data-video-id="${item.id.videoId}">再生</a>
+            `;
+            searchResults.appendChild(resultDiv);
         });
+        addPlayVideoEvent();
+    }
+
+    function addPlayVideoEvent() {
+        const playVideoLinks = document.querySelectorAll('.play-video');
+        playVideoLinks.forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const videoId = this.getAttribute('data-video-id');
+                playVideo(videoId);
+            });
+        });
+    }
+
+    function playVideo(videoId) {
+        videoPlayerContainer.innerHTML = `
+            <video id="video-player" controls>
+                <source src="https://www.youtube.com/embed/${videoId}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        `;
+    }
+
+    function displayError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+    }
 });
