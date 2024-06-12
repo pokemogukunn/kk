@@ -4,20 +4,32 @@ import os
 
 app = Flask(__name__)
 
+YOUTUBE_API_KEY = os.getenv('API_KEY')
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/search', methods=['GET'])
+@app.route('/api/search')
 def search():
     query = request.args.get('q')
-    api_key = os.getenv('API_KEY')
-    if not api_key:
-        return jsonify({"error": "APIキーが設定されていません"}), 500
-    url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&q={query}&key={api_key}"
-    response = requests.get(url)
-    data = response.json()
-    return jsonify(data)
+    if not query:
+        return jsonify({'error': 'Missing query parameter'}), 400
+
+    url = 'https://www.googleapis.com/youtube/v3/search'
+    params = {
+        'part': 'snippet',
+        'q': query,
+        'key': YOUTUBE_API_KEY,
+        'type': 'video'
+    }
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': 'Failed to fetch data from YouTube API', 'message': str(e)}), response.status_code
+
+    return jsonify(response.json())
 
 if __name__ == '__main__':
     app.run(debug=True)
