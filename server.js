@@ -1,37 +1,27 @@
 const express = require('express');
-const ytdl = require('ytdl-core');
-const cors = require('cors');
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.static('public'));
-
-app.get('/api/video', async (req, res) => {
-    const videoId = req.query.videoId;
-
-    if (!ytdl.validateID(videoId)) {
-        console.log('Invalid video ID:', videoId);
-        return res.status(400).json({ error: 'Invalid video ID' });
+// ダウンロードリンクを生成する関数（例）
+const getDownloadLink = (videoId) => {
+    // ここで実際にYouTubeのAPIなどを使ってダウンロードリンクを取得します
+    // 仮のリンクを返します
+    if (!videoId) {
+        throw new Error('動画IDが無効です');
     }
+    return `https://rr4---sn-ab5sznzs.googlevideo.com/videoplayback?expire=...&id=${videoId}`;
+};
 
+app.get('/api/download', (req, res) => {
+    const videoId = req.query.videoId;
     try {
-        const videoInfo = await ytdl.getInfo(videoId);
-        const format = ytdl.chooseFormat(videoInfo.formats, { quality: 'highestvideo' });
-
-        res.json({
-            title: videoInfo.videoDetails.title,
-            author: videoInfo.videoDetails.author.name,
-            description: videoInfo.videoDetails.description,
-            thumbnail: videoInfo.videoDetails.thumbnails[0].url,
-            downloadUrl: format.url
-        });
+        const downloadUrl = getDownloadLink(videoId);
+        res.json({ downloadUrl });
     } catch (error) {
-        console.error('Failed to fetch video info:', error);
-        res.status(500).json({ error: error.message });
+        res.json({ error: error.message });
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
