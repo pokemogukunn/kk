@@ -1,26 +1,22 @@
-document.getElementById('submitBtn').addEventListener('click', async function (e) {
-    e.preventDefault();
-
-    const videoId = document.getElementById('videoId').value;
-    const response = await fetch(`/api/video?videoId=${videoId}`);
-
-    if (response.ok) {
-        const data = await response.json();
-        document.getElementById('videoTitle').textContent = data.title;
-        document.getElementById('videoAuthor').textContent = `作者: ${data.author}`;
-        document.getElementById('videoThumbnail').src = data.thumbnail;
-        document.getElementById('videoDescription').textContent = data.description;
-        document.getElementById('downloadAnchor').href = data.downloadUrl;
-
-        document.getElementById('videoDetails').style.display = 'block';
-        document.getElementById('downloadLink').style.display = 'block';
-        document.getElementById('errorMessage').style.display = 'none';
-    } else {
-        const errorData = await response.json();
-        document.getElementById('errorMessage').textContent = `エラー: ${errorData.error}`;
-        document.getElementById('errorMessage').style.display = 'block'; // エラーメッセージを表示
-        document.getElementById('videoDetails').style.display = 'none';
-        document.getElementById('downloadLink').style.display = 'none';
-    }
-});
-
+function search() {
+    var query = document.getElementById("searchQuery").value;
+    fetch("/search?query=" + query)
+        .then(response => response.json())
+        .then(data => {
+            var resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+            data.items.forEach(item => {
+                var videoDiv = document.createElement("div");
+                var title = document.createElement("h2");
+                title.textContent = item.snippet.title;
+                videoDiv.appendChild(title);
+                var video = document.createElement("iframe");
+                video.width = "560";
+                video.height = "315";
+                video.src = "https://www.youtube.com/embed/" + item.id.videoId;
+                videoDiv.appendChild(video);
+                resultsDiv.appendChild(videoDiv);
+            });
+        })
+        .catch(error => console.error("Error:", error));
+}
