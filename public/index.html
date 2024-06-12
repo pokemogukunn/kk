@@ -2,142 +2,17 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>YouTube 動画検索とダウンロード</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/2.0.6/pure-min.css" integrity="sha384-ZcGF7BCHEpC/qklwFGQu+YpRm4odEgf9gXtExk3q1e1CZtwKePv1uUkjWJ8uC4JX" crossorigin="anonymous">
-    <style>
-        body {
-            background-color: white;
-            color: black;
-            font-family: Arial, sans-serif;
-        }
-        .error {
-            color: red;
-        }
-        .link {
-            color: skyblue;
-            word-break: break-all;
-        }
-        .container {
-            padding: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .button {
-            background-color: skyblue;
-            color: black;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-        .button:hover {
-            background-color: deepskyblue;
-        }
-        .right {
-            text-align: right;
-        }
-        .result {
-            margin-top: 20px;
-        }
-        .video-thumbnail {
-            cursor: pointer;
-            display: block;
-            margin-bottom: 10px;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube検索</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>YouTube 動画検索とダウンロード</h1>
-        <form id="search-form" class="pure-form">
-            <div class="form-group">
-                <input type="text" id="search-query" class="pure-input-1-2" placeholder="動画を検索">
-                <button type="submit" class="button">検索</button>
-            </div>
-        </form>
-        <div id="error-message" class="error"></div>
-        <div id="video-container" class="result"></div>
-        <div id="search-results" class="result"></div>
-        <div id="download-link" class="link right"></div>
+        <h1>YouTube検索</h1>
+        <input type="text" id="searchQuery" placeholder="検索キーワードを入力">
+        <button onclick="search()">検索</button>
+        <div id="results"></div>
     </div>
-
-    <script>
-        const API_KEY = 'YOUR_YOUTUBE_DATA_API_KEY';
-
-        document.getElementById('search-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const query = document.getElementById('search-query').value;
-            const errorMessage = document.getElementById('error-message');
-            const searchResults = document.getElementById('search-results');
-            const videoContainer = document.getElementById('video-container');
-            const downloadLink = document.getElementById('download-link');
-
-            errorMessage.textContent = '';
-            searchResults.innerHTML = '';
-            videoContainer.innerHTML = '';
-            downloadLink.textContent = '';
-
-            fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${query}&key=${API_KEY}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        errorMessage.textContent = '検索に失敗しました。再試行してください。';
-                    } else {
-                        data.items.forEach(item => {
-                            const videoId = item.id.videoId;
-                            const title = item.snippet.title;
-                            const thumbnailUrl = item.snippet.thumbnails.default.url;
-
-                            const videoThumbnail = document.createElement('img');
-                            videoThumbnail.src = thumbnailUrl;
-                            videoThumbnail.alt = title;
-                            videoThumbnail.classList.add('video-thumbnail');
-                            videoThumbnail.addEventListener('click', () => {
-                                displayVideo(videoId, title);
-                            });
-
-                            searchResults.appendChild(videoThumbnail);
-                        });
-                    }
-                })
-                .catch(error => {
-                    errorMessage.textContent = '検索に失敗しました。再試行してください。';
-                });
-        });
-
-        function displayVideo(videoId, title) {
-            const videoContainer = document.getElementById('video-container');
-            const downloadLink = document.getElementById('download-link');
-
-            videoContainer.innerHTML = '';
-            downloadLink.textContent = '';
-
-            const videoEmbed = document.createElement('iframe');
-            videoEmbed.width = '560';
-            videoEmbed.height = '315';
-            videoEmbed.src = `https://www.youtube.com/embed/${videoId}`;
-            videoEmbed.frameBorder = '0';
-            videoEmbed.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-            videoEmbed.allowFullscreen = true;
-            videoContainer.appendChild(videoEmbed);
-
-            fetch(`/api/download?videoId=${videoId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        document.getElementById('error-message').textContent = data.error;
-                    } else {
-                        const link = document.createElement('a');
-                        link.href = data.downloadUrl;
-                        link.textContent = 'ダウンロードリンク';
-                        link.target = '_blank';
-                        downloadLink.appendChild(link);
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('error-message').textContent = 'ダウンロードリンクの取得に失敗しました。';
-                });
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
