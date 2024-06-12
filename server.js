@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// 静的ファイルの提供
+app.use(express.static('public'));
+
 // ダウンロードリンクを生成する関数（例）
 const getDownloadLink = (videoId) => {
     // ここで実際にYouTubeのAPIなどを使ってダウンロードリンクを取得します
