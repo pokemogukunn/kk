@@ -23,3 +23,4 @@ document.getElementById('submitBtn').addEventListener('click', async function (e
         document.getElementById('downloadLink').style.display = 'none';
     }
 });
+
