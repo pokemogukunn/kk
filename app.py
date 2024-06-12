@@ -1,20 +1,20 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import requests
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.route('/')
 def index():
-    return render_template("public/index.html")
+    return render_template('index.html')
 
-@app.route("/search")
+@app.route('/search', methods=['GET'])
 def search():
-    query = request.args.get("query")
-    API_KEY = "AIzaSyDMRXXUj0XS9vRjTaV5A2WrNxmv3gr4yR0"
-    url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q={query}&key={API_KEY}"
+    query = request.args.get('q')
+    api_key = "your-api-key"  # 環境変数から取得する場合: os.getenv('API_KEY')
+    url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&q={query}&key={api_key}"
     response = requests.get(url)
     data = response.json()
     return jsonify(data)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
