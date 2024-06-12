@@ -1,103 +1,86 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>動画検索とダウンロード</title>
+    <title>動画ダウンロードサイト</title>
+    <link rel="icon" type="image/png" href="https://ssl.gstatic.com/translate/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/2.0.6/pure-min.css" integrity="sha384-ZcGF7BCHEpC/qklwFGQu+YpRm4odEgf9gXtExk3q1e1CZtwKePv1uUkjWJ8uC4JX" crossorigin="anonymous">
     <style>
         body {
             background-color: white;
             color: black;
             font-family: Arial, sans-serif;
         }
+        .error {
+            color: red;
+        }
+        .link {
+            color: skyblue;
+            word-break: break-all;
+        }
         .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             padding: 20px;
         }
-        .search-box {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            margin-bottom: 20px;
+        .form-group {
+            margin-bottom: 15px;
         }
-        .search-box input {
-            flex: 1;
-            padding: 10px;
-            font-size: 16px;
-        }
-        .search-box button {
-            padding: 10px;
-            background-color: #00f;
-            color: white;
+        .button {
+            background-color: skyblue;
+            color: black;
             border: none;
+            padding: 10px 20px;
             cursor: pointer;
         }
-        .results {
-            width: 100%;
-            max-width: 600px;
+        .button:hover {
+            background-color: deepskyblue;
         }
-        .result-item {
-            padding: 10px;
-            border-bottom: 1px solid #ccc;
+        .right {
+            text-align: right;
         }
-        .result-item a {
-            color: #00f;
-        }
-        .error-message {
-            color: red;
+        .result {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>動画検索とダウンロード</h1>
-        <div class="search-box">
-            <input type="text" id="searchQuery" placeholder="動画を検索...">
-            <button onclick="searchVideos()">検索</button>
-        </div>
-        <div id="errorMessage" class="error-message"></div>
-        <div id="results" class="results"></div>
+        <form id="search-form" class="pure-form">
+            <div class="form-group">
+                <input type="text" id="video-id" class="pure-input-1-2" placeholder="動画IDを入力">
+                <button type="submit" class="button">検索</button>
+            </div>
+        </form>
+        <div id="error-message" class="error"></div>
+        <div id="download-link" class="link right"></div>
     </div>
+
     <script>
-        async function searchVideos() {
-            const query = document.getElementById('searchQuery').value;
-            if (!query) {
-                displayError('検索クエリを入力してください。');
-                return;
-            }
+        document.getElementById('search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const videoId = document.getElementById('video-id').value;
+            const errorMessage = document.getElementById('error-message');
+            const downloadLink = document.getElementById('download-link');
 
-            try {
-                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-                if (!response.ok) {
-                    throw new Error('検索に失敗しました。');
-                }
-                const results = await response.json();
-                displayResults(results);
-            } catch (error) {
-                displayError(error.message);
-            }
-        }
+            errorMessage.textContent = '';
+            downloadLink.textContent = '';
 
-        function displayResults(results) {
-            const resultsContainer = document.getElementById('results');
-            resultsContainer.innerHTML = '';
-            results.forEach(video => {
-                const item = document.createElement('div');
-                item.className = 'result-item';
-                item.innerHTML = `
-                    <h3>${video.snippet.title}</h3>
-                    <p>${video.snippet.description}</p>
-                    <a href="https://www.youtube.com/watch?v=${video.id.videoId}" target="_blank">視聴する</a>
-                `;
-                resultsContainer.appendChild(item);
-            });
-        }
-
-        function displayError(message) {
-            const errorMessage = document.getElementById('errorMessage');
-            errorMessage.textContent = message;
-        }
+            fetch(`/api/download?videoId=${videoId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        errorMessage.textContent = data.error;
+                    } else {
+                        const link = document.createElement('a');
+                        link.href = data.downloadUrl;
+                        link.textContent = 'ダウンロードリンク';
+                        link.target = '_blank';
+                        downloadLink.appendChild(link);
+                    }
+                })
+                .catch(error => {
+                    errorMessage.textContent = '検索に失敗しました。再試行してください。';
+                });
+        });
     </script>
 </body>
 </html>
