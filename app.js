@@ -10,7 +10,7 @@ app.get("/api/convert", async (req, res) => {
     }
 
     try {
-        const videoUrl = `https://www.youtube.com/watch?v=”videoId“`;
+        const videoUrl = `https://www.youtube.com/watch?v=”${videoId}`;
         const info = await ytdl.getInfo(videoUrl);
         const format = ytdl.chooseFormat(info.formats, { quality: "18" }); // itag 18 is for MP4
 
