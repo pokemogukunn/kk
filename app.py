@@ -10,7 +10,7 @@ def index():
 @app.route("/search")
 def search():
     query = request.args.get("query")
-    API_KEY = "AIzaSyA-EqIXnZuPjds-KHEaBOMVwGaKWL2vsms"
+    API_KEY = "AIzaSyDMRXXUj0XS9vRjTaV5A2WrNxmv3gr4yR0"
     url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q={query}&key={API_KEY}"
     response = requests.get(url)
     data = response.json()
