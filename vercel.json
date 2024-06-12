@@ -12,13 +12,5 @@
       "src": "/(.*)",
       "dest": "app.py"
     }
-  ],
-  "env": {
-    "API_KEY": "your-api-key"
-  },
-  "functions": {
-    "api/*": {
-      "runtime": "python3.8"
-    }
-  }
+  ]
 }
