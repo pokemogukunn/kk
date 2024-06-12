@@ -1,9 +1,19 @@
 {
+  "name": "my-project",
   "version": 2,
   "builds": [
     {
-      "src": "index.html",
-      "use": "@now/static"
+      "src": "app.py",
+      "use": "@now/python"
     }
-  ]
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "app.py"
+    }
+  ],
+  "env": {
+    "API_KEY": "your-api-key"
+  }
 }
