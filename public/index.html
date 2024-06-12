@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube検索</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Video Search</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>YouTube検索</h1>
-        <input type="text" id="searchQuery" placeholder="検索キーワードを入力">
-        <button onclick="search()">検索</button>
+        <h1>Video Search</h1>
+        <form id="search-form">
+            <input type="text" id="search-query" placeholder="検索">
+            <button type="submit">検索</button>
+        </form>
         <div id="results"></div>
     </div>
-    <script src="script.js"></script>
+    <script src="/static/scripts.js"></script>
 </body>
 </html>
