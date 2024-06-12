@@ -16,9 +16,10 @@
   "env": {
     "API_KEY": "your-api-key"
   },
+{
   "functions": {
-    "app.py": {
-      "runtime": "python3.7"
+    "api/*": {
+      "runtime": "python3.8"
     }
   }
 }
