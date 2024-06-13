@@ -1,18 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Search</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body {
+            background-color: white;
+            color: black;
+            font-family: Arial, sans-serif;
+        }
+        .search-container {
+            margin: 20px;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .error-message {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>YouTube Search</h1>
-        <input type="text" id="search-input" placeholder="Search for videos...">
-        <button id="search-button">Search</button>
-        <div id="results"></div>
+    <div class="search-container">
+        <input type="text" id="searchQuery" placeholder="検索">
+        <button onclick="search()">検索</button>
     </div>
-    <script src="/static/scripts.js"></script>
+    <div class="results" id="results"></div>
+    <div class="error-message" id="errorMessage"></div>
+
+    <script>
+        function search() {
+            const query = document.getElementById('searchQuery').value;
+            fetch(`/api/search?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('errorMessage').innerText = data.message || '検索に失敗しました';
+                    } else {
+                        const resultsContainer = document.getElementById('results');
+                        resultsContainer.innerHTML = '';
+                        data.items.forEach(item => {
+                            const videoElement = document.createElement('div');
+                            videoElement.innerHTML = `
+                                <h3>${item.snippet.title}</h3>
+                                <img src="${item.snippet.thumbnails.default.url}" alt="${item.snippet.title}">
+                                <p>${item.snippet.description}</p>
+                                <a href="https://www.youtube.com/watch?v=${item.id.videoId}" target="_blank">動画を見る</a>
+                            `;
+                            resultsContainer.appendChild(videoElement);
+                        });
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('errorMessage').innerText = '検索に失敗しました';
+                });
+        }
+    </script>
 </body>
 </html>
