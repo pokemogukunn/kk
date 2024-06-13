@@ -4,7 +4,7 @@ import os
 
 app = Flask(__name__)
 
-YOUTUBE_API_KEY = os.getenv('AIzaSyA-EqIXnZuPjds-KHEaBOMVwGaKWL2vsms')
+YOUTUBE_API_KEY = os.getenv('AIzaSyDMRXXUj0XS9vRjTaV5A2WrNxmv3gr4yR0')
 
 @app.route('/')
 def index():
