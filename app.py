@@ -27,7 +27,7 @@ def search():
         response = requests.get(url, params=params)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        return jsonify({'error': 'Failed to fetch data from YouTube API', 'message': str(e)}), response.status_code
+        return jsonify({'error': 'Failed to fetch data from YouTube API', 'message': str(e)}), 500
 
     return jsonify(response.json())
 
