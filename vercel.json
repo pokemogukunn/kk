@@ -13,6 +13,6 @@
     }
   ],
   "env": {
-    "API_KEY": "AIzaSyA-EqIXnZuPjds-KHEaBOMVwGaKWL2vsms"
+    "API_KEY": "your-api-key"
   }
 }
