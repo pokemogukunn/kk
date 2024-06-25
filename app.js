@@ -3,7 +3,7 @@ const ytdl = require("ytdl-core");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get("/api/convert", async (req, res) => {
+app.get("/api/search", async (req, res) => {
     const videoId = req.query.videoId;
     if (!videoId) {
         return res.status(400).json({ success: false, message: "ビデオIDが指定されていません。" });
